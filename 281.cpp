@@ -54,3 +54,84 @@ int main()
 	
 	return 0;
 }
+
+
+
+#include<iostream>
+#include<string>
+#include<queue>
+#include<vector>
+
+using namespace std;
+
+queue<string> OneLetterLength(string StartWord, vector<string> &Dict)
+{
+	queue<string> result;
+	Dict.push_back("#");
+	int index = 0;
+
+	while (Dict[index] != "#")
+	{
+		if (Dict[index].size() == StartWord.size() - 1)
+		{
+			for (int i = 0; i < StartWord.size(); i++)
+			{
+				string temp = StartWord;
+				if (temp.erase(i,1) == Dict[index])
+				{
+					result.push(Dict[index]);
+					break;
+				}
+			}
+		}
+
+		if (Dict[index].size() == StartWord.size() + 1)
+		{
+			for (int i = 0; i < Dict[index].size(); i++)
+			{
+				string temp = Dict[index];
+				if (temp.erase(i,1) == StartWord)
+				{
+					result.push(Dict[index]);
+					break;
+				}
+			}
+		}
+
+		index++;
+	}
+
+	return result;
+}
+
+int main()
+{
+	vector<string> Dict;
+	Dict.push_back("ca");
+	Dict.push_back("shit");
+	Dict.push_back("a");
+	Dict.push_back("c");
+	Dict.push_back("xxx");
+	Dict.push_back("aty");
+	Dict.push_back("cae");
+	Dict.push_back("cate");
+	Dict.push_back("kate");
+	Dict.push_back("ckat");
+	Dict.push_back("at");
+	Dict.push_back("ka");
+
+	string start  = "cat";
+
+	queue<string> test;
+
+	test = OneLetterLength(start, Dict);
+	cout << test.size() << endl;
+	
+	while(!test.empty())
+	{
+		cout << test.front() << endl;
+		test.pop();
+	}
+	
+	return 0;
+}
