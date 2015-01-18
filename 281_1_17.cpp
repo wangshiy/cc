@@ -2,28 +2,39 @@
 #include<string>
 #include<queue>
 #include<vector>
+#include<utility>
+#include<stack>
 
 using namespace std;
 
-queue<pair<int,int>> Record;
+vector<pair<string,pair<int,int>>> Record;
+int position = 0;
 
-void OneLetterChange(string StartWord, string EndWord, vector<string> &Dict, queue<string> &Result, bool &FirstTime)
+pair<string,pair<int,int>> MakePair(string S, int Prev, int Post)
+{
+	pair<int,int> int_pair(Prev,Post);
+	pair<string,pair<int,int>> result(S,int_pair);
+	return result;
+}
+
+void OneLetterChange(string StartWord, string EndWord, vector<string> &Dict, queue<pair<string,pair<int,int>>> &Result, bool &FirstTime, int &Index, bool &Found)
 {
 	cout << "hello" << endl;
 	if (FirstTime == true)
 	{
 		FirstTime = false;
 		Dict.push_back("#");
-		Result.push(StartWord);
-		pair<int,int> firstpair(0,0);
-		Record.push(firstpair);
+		Result.push(MakePair(StartWord,0,0));
+		//Index = 0;
 	}
 
 	if (Result.empty())
 	{
 		return;
 	}
+	Record.push_back(Result.front());
 	Result.pop();
+	//Record.push(StartWord);
 	cout << "im here" << endl;
 	for (size_t i = 0; i < StartWord.size(); i++)
 	{
@@ -33,21 +44,16 @@ void OneLetterChange(string StartWord, string EndWord, vector<string> &Dict, que
 		{
 			string tmp = ref;
 			string start = StartWord;
-			/*
-			if (Dict[index] == EndWord) 
-			{
-				cout << "found" << endl;
-				Result.push(Dict[index]);
-				return;
-			}
-			*/
 			if (StartWord.size() == ref.size() && StartWord[i] != ref[i] && start.erase(i,1) == ref.erase(i,1))
 			{
-				Result.push(tmp);
+				position++;
+				Result.push(MakePair(tmp,Index,position));
 				Dict.erase(Dict.begin()+index);
 				if (tmp == EndWord)
 				{
 					cout << "found" << endl;
+					Found = true;
+					Record.push_back(MakePair(tmp,Index,position));
 					return;
 				}
 			}
@@ -64,19 +70,12 @@ void OneLetterChange(string StartWord, string EndWord, vector<string> &Dict, que
 		temp.pop();
 	}
 	*/
-	string next = Result.front();
-	cout << "next:" << next << endl;
+	pair<string,pair<int,int>> next = Result.front();
+	//cout << "next:" << next << endl;
 	//Result.pop();
-	OneLetterChange(next, EndWord, Dict, Result, FirstTime);
+	OneLetterChange(next.first, EndWord, Dict, Result, FirstTime,next.second.second, Found);
 
 	return;
-}
-
-pair<string,pair<int,int>> MakePair(string S, int Prev, int Post)
-{
-	pair<int,int> int_pair(Prev,Post);
-	pair<string,pair<int,int>> result(S,int_pair);
-	return result;
 }
 
 int main()
@@ -93,17 +92,38 @@ int main()
 	string start  = "chip";
 	string stop = "stop";
 
-	queue<string> test;
+	queue<pair<string,pair<int,int>>> test;
 	bool first = true;
+	int first_index = 0;
+	bool found = false;
 
-	OneLetterChange(start, stop, Dict, test, first);
+	OneLetterChange(start, stop, Dict, test, first, first_index,found);
+	/*
+	cout << Record.size() << endl;
 	
-	cout << test.size() << endl;
-	
-	while(!test.empty())
+	while(!Record.empty())
 	{
-		cout << test.front() << endl;
-		test.pop();
+		cout << Record.front() << endl;
+		Record.pop();
+	}
+	*/
+	if (found == true)
+	{
+		stack<string> Final;
+		int post = test.front().second.second;
+		do
+		{
+			Final.push(Record[post].first);
+			post = Record[post].second.first;
+		} while (post != 0);
+		Final.push(Record[0].first);
+
+		cout << Final.size() << endl;
+		while (!Final.empty())
+		{
+			cout << Final.top() << endl;
+			Final.pop();
+		}
 	}
 	
 	return 0;
