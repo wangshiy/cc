@@ -25,6 +25,7 @@ void OneLetterChange(string StartWord, string EndWord, vector<string> &Dict, que
 		FirstTime = false;
 		Dict.push_back("#");
 		Result.push(MakePair(StartWord,0,0));
+		Record.push_back(MakePair(StartWord,0,0));
 		//Index = 0;
 	}
 
@@ -32,10 +33,10 @@ void OneLetterChange(string StartWord, string EndWord, vector<string> &Dict, que
 	{
 		return;
 	}
-	Record.push_back(Result.front());
+	//Record.push_back(Result.front());
 	Result.pop();
 	//Record.push(StartWord);
-	cout << "im here" << endl;
+	//cout << "im here" << endl;
 	for (size_t i = 0; i < StartWord.size(); i++)
 	{
 		string ref = Dict[0];
@@ -48,7 +49,7 @@ void OneLetterChange(string StartWord, string EndWord, vector<string> &Dict, que
 			{
 				position++;
 				Result.push(MakePair(tmp,Index,position));
-				Dict.erase(Dict.begin()+index);
+				Record.push_back(MakePair(tmp,Index,position));
 				if (tmp == EndWord)
 				{
 					cout << "found" << endl;
@@ -56,6 +57,7 @@ void OneLetterChange(string StartWord, string EndWord, vector<string> &Dict, que
 					Record.push_back(MakePair(tmp,Index,position));
 					return;
 				}
+				Dict.erase(Dict.begin()+index);
 			}
 			index++;
 			ref = Dict[index];
@@ -110,7 +112,7 @@ int main()
 	if (found == true)
 	{
 		stack<string> Final;
-		int post = test.front().second.second;
+		int post = test.back().second.second;
 		do
 		{
 			Final.push(Record[post].first);
